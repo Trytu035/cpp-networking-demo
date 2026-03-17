@@ -1,0 +1,33 @@
+cmake_minimum_required(VERSION 3.25.0)
+project(Lab1_server)
+project(Lab1_client)
+
+set(CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(POLICY CMP0167)  # needed for FindBoost
+  cmake_policy(SET CMP0167 NEW)
+endif()
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/config.txt)
+
+set(Boost_DIR ${Boost_DIR_Path})
+
+find_package(Boost REQUIRED)
+
+if(NOT Boost_FOUND)
+  message(FATAL_ERROR "Boost not found; check Boost_ROOT or installation")
+endif()
+
+file(GLOB_RECURSE my_server_sources CONFIGURE_DEPENDS "server_src/*.cpp")
+add_executable(Lab1_server ${my_server_sources})
+target_include_directories(Lab1_server PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(Lab1_server PRIVATE ${Boost_LIBRARIES})
+
+file(GLOB_RECURSE my_client_sources CONFIGURE_DEPENDS "client_src/*.cpp")
+add_executable(Lab1_client ${my_client_sources})
+target_include_directories(Lab1_client PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(Lab1_client PRIVATE ${Boost_LIBRARIES})
+
+
+message(STATUS "Boost libs: ${Boost_LIBRARY_DIRS}, includes: ${Boost_INCLUDE_DIRS}")
